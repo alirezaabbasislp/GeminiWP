@@ -1,70 +1,118 @@
-# WP Flask Post Generator (v0.2)
+# Ai WP Flask: AI-Powered WordPress Content Generator
 
-This is a standalone Flask application designed to generate and publish posts to WordPress. This version (0.2) is distributed as a single executable file, ensuring ease of use without requiring Python or library installations on the target system. Sensitive information like API keys, passwords, and site links are not hardcoded or stored within the distributed executable or its initial database.
+## Project Overview
 
-## Table of Contents
-1.  [Features](#features)
-2.  [Getting Started](#getting-started)
-    *   [Prerequisites](#prerequisites)
-    *   [Running the Application](#running-the-application)
-3.  [Initial Setup and Configuration](#initial-setup-and-configuration)
-4.  [Application Usage](#application-usage)
-    *   [Dashboard](#dashboard)
-    *   [Topics](#topics)
-    *   [Posts](#posts)
-    *   [Settings](#settings)
-5.  [Troubleshooting](#troubleshooting)
+Ai WP Flask is a Flask-based web application designed to streamline the creation and publishing of blog posts to WordPress using the Google Gemini API. It provides a user-friendly interface to manage topics, generate content with customizable system prompts, and directly publish to a connected WordPress site.
 
-## 1. Features
-*   Generate post content using Gemini API.
-*   Publish generated content to WordPress.
-*   Manage topics for post generation.
-*   Configure WordPress and Gemini API settings via a web interface.
+## Features
 
-## 2. Getting Started
+*   **AI-Powered Content Generation**: Leverage the Google Gemini API to generate high-quality blog post titles, content, meta descriptions, and keywords based on user prompts and predefined system instructions.
+*   **WordPress Integration**: Seamlessly publish generated content directly to your WordPress site, including support for categories, tags, and featured images.
+*   **Topic Management**: Organize your content ideas by creating and managing topics with associated categories and statuses.
+*   **Customizable System Prompts**: Define and manage various system prompts (personas, tones, audiences, etc.) to guide the AI in generating tailored content.
+*   **Database Management**: SQLite database for storing application settings, topics, and system prompts.
+*   **Content Rendering**: Custom rendering of special tags (e.g., `[CODE]`, `[INFO]`, `[NOTE]`) into HTML for enhanced content presentation.
+
+## Project Structure
+
+```mermaid
+graph TD
+    A[app.py] --> B(Flask Application)
+    B --> C{Routes}
+    C --> D[Dashboard]
+    C --> E[Topics Management]
+    C --> F[Posts Generation/Publishing]
+    C --> G[Settings Configuration]
+    C --> H[System Prompts Management]
+
+    B --> I[database.py]
+    I --> J(SQLite Database)
+    J --> K[settings Table]
+    J --> L[topics Table]
+    J --> M[posts Table]
+    J --> N[system_prompts Table]
+
+    B --> O[gemini.py]
+    O --> P(Google Gemini API)
+
+    B --> Q[wordpress.py]
+    Q --> R(WordPress REST API)
+
+    B --> S[renderer.py]
+    S --> T(HTML Content Rendering)
+
+    U[init_db.py] --> I
+    V[schema.sql] --> I
+    W[templates/] --> B
+    X[static/] --> B
+```
+
+## Technologies Used
+
+*   **Backend**: Python, Flask
+*   **Database**: SQLite
+*   **AI Integration**: Google Gemini API
+*   **CMS Integration**: WordPress REST API
+*   **Frontend**: HTML, CSS, JavaScript (with TinyMCE for rich text editing)
+
+## Installation and Setup
 
 ### Prerequisites
-*   **Operating System**: Windows (The executable is built for Windows 64-bit).
-*   **Internet Connection**: Required for interacting with Gemini API and WordPress.
 
-### Running the Application
-1.  **Locate the Executable**: Navigate to the `dist` folder within the project directory. You will find `WP_Flask_v0.2.exe`.
-2.  **Delete Existing Database (Optional but Recommended for Clean Start)**: If you have previously run the application and wish to start with a fresh database, delete the `database.db` file from the main project directory (e.g., `f:\Ai Projects\Ai WP Flask\database.db`).
-3.  **Run the Executable**: Double-click `WP_Flask_v0.2.exe` or open a command prompt/terminal in the `dist` directory and run:
+*   Python 3.x
+*   pip (Python package installer)
+*   A WordPress site with REST API enabled.
+*   A Google Cloud project with the Gemini API enabled and an API key.
+
+### Steps
+
+1.  **Clone the repository:**
     ```bash
-    .\WP_Flask_v0.2.exe
+    git clone <repository_url>
+    cd Ai-WP-Flask
     ```
-    A console window will appear, indicating that the Flask server is running. Do not close this window while using the application.
+    *(Note: Replace `<repository_url>` with the actual repository URL)*
 
-## 3. Initial Setup and Configuration
-Upon first running the application (or after deleting `database.db`), the application will automatically create a new, empty `database.db` file.
+2.  **Create a virtual environment (recommended):**
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows: `venv\Scripts\activate`
+    ```
 
-1.  **Access the Application**: Open your web browser and go to `http://127.0.0.1:5000/`.
-2.  **Settings Page Redirection**: The application will automatically redirect you to the `/settings` page if essential settings (WordPress URL) are not yet configured.
-3.  **Enter Your Credentials**: On the settings page, you must provide the following information:
-    *   **Gemini API Key**: Your API key for the Google Gemini API.
-    *   **WordPress URL**: The base URL of your WordPress site (e.g., `https://your-wordpress-site.com`).
-    *   **WordPress Username**: Your WordPress username with publishing permissions.
-    *   **WordPress Password**: Your WordPress application password (not your regular user password). If you don't have one, generate it in your WordPress dashboard under Users -> Your Profile -> Application Passwords.
-    *   **Default Post Status**: (Optional) Choose a default status for new posts (e.g., "draft", "publish").
-4.  **Save Settings**: Click the "Save Settings" button. Once saved, the application will be ready for use.
+3.  **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+    *(Note: A `requirements.txt` file is assumed to exist. If not, list required packages like `Flask`, `google-generativeai`, `python-wordpress-xmlrpc`)*
 
-## 4. Application Usage
+4.  **Initialize the database:**
+    ```bash
+    python init_db.py
+    ```
+    This will create `database.db` and set up the necessary tables.
 
-### Dashboard
-The main dashboard provides an overview of your application.
+5.  **Run the application:**
+    ```bash
+    python app.py
+    ```
 
-### Topics
-Manage topics for your posts. You can add new topics and update their status.
+6.  **Access the application:**
+    Open your web browser and navigate to `http://127.0.0.1:5000/`.
 
-### Posts
-Generate and publish new posts. You can specify prompts, length, tone, audience, SEO keywords, outline, and language for content generation.
+7.  **Configure Settings:**
+    Go to the `/settings` page to enter your Google Gemini API key and WordPress site details (URL, username, password).
 
-### Settings
-Modify your Gemini API and WordPress credentials, or other application settings.
+## Usage
 
-## 5. Troubleshooting
-*   **"no such table: settings" error**: This indicates the database was not initialized correctly. Ensure you deleted any old `database.db` file and then re-ran the executable. The application should create a fresh database automatically.
-*   **Application not accessible**: Ensure the console window for `WP_Flask_v0.2.exe` is still open and running. Check if the port 5000 is free on your system.
-*   **WordPress API issues**: Double-check your WordPress URL, username, and especially the application password in the `/settings` page. Ensure your WordPress site is accessible and the REST API is enabled.
-*   **Gemini API issues**: Verify your Gemini API key in the `/settings` page. Ensure you have an active internet connection.
+1.  **Dashboard**: Overview of your content generation activities.
+2.  **Topics**: Manage your content ideas. Add new topics, assign categories, and update their status.
+3.  **Posts**: Generate new blog posts using AI. Select a topic, provide a prompt, choose a system prompt, and generate content. You can then publish the generated content directly to WordPress.
+4.  **System Prompts**: Create, edit, and delete custom system prompts to guide the AI's content generation based on specific personas, tones, or content goals.
+
+## Contributing
+
+(Optional section for contribution guidelines)
+
+## License
+
+(Optional section for licensing information)
